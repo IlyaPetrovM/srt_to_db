@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  srt-service:
+    build: .
+    ports:
+      - "3333:3333"
+    environment:
+      DB_HOST: mediarch-serviceMariadb-1
+      DB_PORT: 3306
+    networks:
+      - mediarch_network
+
+networks:
+  mediarch_network:
+    external: true
+    name: mediarch_mediarch_network

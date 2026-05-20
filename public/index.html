@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SRT Upload</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: 50px auto; }
+    input, button { padding: 8px; font-size: 14px; }
+    input[type="file"], input[type="number"] { width: 100%; margin: 10px 0; }
+    button { width: 100%; cursor: pointer; background: #007bff; color: white; border: none; }
+    button:hover { background: #0056b3; }
+    .result { margin-top: 20px; padding: 10px; border-radius: 4px; }
+    .success { background: #d4edda; color: #155724; }
+    .error { background: #f8d7da; color: #721c24; }
+  </style>
+</head>
+<body>
+  <h2>Загрузка файлов субтитров SRT в базу</h2>
+  <form id="form">
+    <input type="number" id="fileId" placeholder="File ID" required>
+    <input type="file" id="srtFile" accept=".srt" required>
+    <button type="submit">Загрузить</button>
+  </form>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = '';
+
+      const fileId = document.getElementById('fileId').value;
+      const file = document.getElementById('srtFile').files[0];
+
+      if (!fileId || !file) {
+        resultDiv.textContent = 'Fill all fields';
+        resultDiv.className = 'result error';
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('fileId', fileId);
+      formData.append('srtFile', file);
+
+      try {
+        const res = await fetch('/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (res.ok) {
+          resultDiv.textContent = `Saved ${data.count} subtitles`;
+          resultDiv.className = 'result success';
+          document.getElementById('form').reset();
+        } else {
+          resultDiv.textContent = data.error || 'Error';
+          resultDiv.className = 'result error';
+        }
+      } catch (err) {
+        resultDiv.textContent = 'Request error: ' + err.message;
+        resultDiv.className = 'result error';
+      }
+    });
+  </script>
+</body>
+</html>
