@@ -38,4 +38,4 @@ Another subtitle
   - `file_id`: ID медиафайла
   - `time_msec`: время начала в миллисекундах
   - `start_time`: время начала (hh:mm:ss)
-  - `recognition0`: текст субтитра
+  - `describtion`: текст субтитра
