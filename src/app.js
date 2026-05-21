@@ -1,8 +1,11 @@
+const path = require('path');
 const express = require('express');
 const multer = require('multer');
 const mysql = require('mysql2/promise');
 const { parseSRT } = require('./srt_decoder');
-const config = require('./config');
+const config = require('../config');
+
+const publicPath = path.join(__dirname, '../public');
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -22,7 +25,7 @@ async function saveSRTtoDB(subtitles, fileId) {
   try {
     for (const sub of subtitles) {
       await conn.execute(
-        'INSERT INTO marks (file_id, time_msec, start_time, recognition0) VALUES (?, ?, ?, ?)',
+        'INSERT INTO marks (file_id, time_msec, start_time, describtion) VALUES (?, ?, ?, ?)',
         [fileId, sub.time_msec, sub.start_time, sub.recognition0]
       );
     }
@@ -31,10 +34,10 @@ async function saveSRTtoDB(subtitles, fileId) {
   }
 }
 
-app.use(express.static('public'));
+app.use(express.static(publicPath));
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 app.post('/upload', upload.single('srtFile'), async (req, res) => {
@@ -57,11 +60,11 @@ app.post('/upload', upload.single('srtFile'), async (req, res) => {
 
     if (subtitles.length === 0) {
       console.log(`[${timestamp}] empty SRT fileId:${fileId}`);
-      return res.status(400).json({ error: 'No subtitles found in SRT' });
+      return res.status(400).json({ error: 'Субтитры не найдены в SRT файле' });
     }
 
     await saveSRTtoDB(subtitles, fileId);
-    console.log(`[${timestamp}] saved ${subtitles.length} subtitles fileId:${fileId}`);
+    console.log(`[${timestamp}] сохранено ${subtitles.length} субтитров fileId:${fileId}`);
 
     res.json({
       success: true,

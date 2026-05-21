@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>SRT Upload</title>
+  <title>SRT загрузка</title>
   <style>
     body { font-family: sans-serif; max-width: 500px; margin: 50px auto; }
     input, button { padding: 8px; font-size: 14px; }
@@ -15,7 +15,7 @@
   </style>
 </head>
 <body>
-  <h2>Загрузка файлов субтитров SRT в базу</h2>
+  <h2>Прикрепление SRT к файлу в базе</h2>
   <form id="form">
     <input type="number" id="fileId" placeholder="File ID" required>
     <input type="file" id="srtFile" accept=".srt" required>
@@ -33,7 +33,7 @@
       const file = document.getElementById('srtFile').files[0];
 
       if (!fileId || !file) {
-        resultDiv.textContent = 'Fill all fields';
+        resultDiv.textContent = 'Заполните все поля';
         resultDiv.className = 'result error';
         return;
       }
@@ -47,7 +47,7 @@
         const data = await res.json();
 
         if (res.ok) {
-          resultDiv.textContent = `Saved ${data.count} subtitles`;
+          resultDiv.textContent = `Сохранено ${data.count} субтитров`;
           resultDiv.className = 'result success';
           document.getElementById('form').reset();
         } else {
@@ -55,7 +55,7 @@
           resultDiv.className = 'result error';
         }
       } catch (err) {
-        resultDiv.textContent = 'Request error: ' + err.message;
+        resultDiv.textContent = 'Ошибка: ' + err.message;
         resultDiv.className = 'result error';
       }
     });
